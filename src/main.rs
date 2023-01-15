@@ -1,4 +1,5 @@
 mod todo_list {
+    use core::panic;
     use std::{collections::HashMap};
 
     pub struct TodoList {
@@ -35,10 +36,10 @@ mod todo_list {
         pub fn add_task_to_list(&mut self, name_list: &str, task_name: &str, task_description: &str) {
             let task: Task = Task::new(task_name, task_description);
 
-            if let Some(list) = self.lists.get_mut(name_list) {
-                list.add_task(task);
-            } else {
-                todo!("Error todo");
+            let list = self.lists.get_mut(name_list);
+            match list {
+                Some(x) => x.add_task(task),
+                None => panic!("The list doesn't exist!")
             }
         }
     }
@@ -106,6 +107,7 @@ fn main() {
 
     todo_list.add_list("home");
     todo_list.add_task_to_list("home", "Task two", "Refactor my brain using rust !");
-    
+    // todo_list.add_task_to_list("taf", "Task three", "Err task");
+
     todo_list.print_todo_list();
 }
