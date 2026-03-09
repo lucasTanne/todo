@@ -49,3 +49,53 @@ impl TodoList {
         return Err(String::from("not found"));
     }
 }
+
+#[cfg(test)]
+mod test {
+    use uuid::Uuid;
+    use crate::todo_list::{Task, new};
+    use super::TodoList;
+
+    #[test]
+    fn test_new_task() {
+        let mut _todo_list: TodoList = new();
+        _todo_list.new_task(String::from("test"), String::from("desc test"));
+
+        assert_eq!(_todo_list.tasks.len(), 1);
+    }
+
+    #[test]
+    fn test_get_task() {
+        let _task_uuid = Uuid::new_v4();
+        let mut _todo_list: TodoList = new();
+        _todo_list.tasks.push(Task{
+            uuid: _task_uuid,
+            name: String::from("test"),
+            description: String::from("test desc"),
+        });
+
+        let _res: Option<&Task> = _todo_list.get_task(&_task_uuid);
+        assert!(_res.is_some());
+        assert_eq!(_res.unwrap().name, String::from("test"));
+        assert_eq!(_res.unwrap().description, String::from("test desc"));
+
+        let _fake_uuid = Uuid::new_v4();
+        assert!(_todo_list.get_task(&_fake_uuid).is_none());
+    }
+
+    #[test]
+    fn test_remove_task() {
+        let _task_uuid = Uuid::new_v4();
+        let mut _todo_list: TodoList = new();
+        _todo_list.tasks.push(Task{
+            uuid: _task_uuid,
+            name: String::from("test"),
+            description: String::from("test desc"),
+        });
+        assert_eq!(_todo_list.tasks.len(), 1);
+
+        let _res = _todo_list.delete_task(&_task_uuid);
+        assert_eq!(_res.unwrap(), 0);
+        assert_eq!(_todo_list.tasks.len(), 0);
+    }
+}
